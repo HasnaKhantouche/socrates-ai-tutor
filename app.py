@@ -1,5 +1,8 @@
 import streamlit as st
-import requests
+from services.llm_service import get_socratic_response
+from services.text_processor import preprocess_text
+from services.ml_categorizer import categorize_question
+import asyncio
 
 st.set_page_config(page_title="Project Socrates", page_icon="🧠")
 
@@ -13,19 +16,16 @@ user_input = st.text_input("Your question:", key="input")
 
 if st.button("Ask Socrates") and user_input.strip():
     with st.spinner("Thinking..."):
-        # Call your FastAPI backend
-        response = requests.post(
-            "http://localhost:8000/dialogue",
-            json={"question": user_input}
-        )
-        if response.status_code == 200:
-            data = response.json()
-            st.session_state.history.append(("You", user_input))
-            st.session_state.history.append(("Socrates", data["response"]))
-            st.info(f"Complexity Level: {data.get('complexity', 'N/A')}")
+        processed = preprocess_text(user_input)
+        complexity = categorize_question(user_input)
+        # If get_socratic_response is async, use asyncio.run
+        if asyncio.iscoroutinefunction(get_socratic_response):
+            response = asyncio.run(get_socratic_response(user_input, complexity))
         else:
-            st.error("Error: " + response.text)
-    
+            response = get_socratic_response(user_input, complexity)
+        st.session_state.history.append(("You", user_input))
+        st.session_state.history.append(("Socrates", response))
+        st.info(f"Complexity Level: {complexity}")
 
 # Display chat history
 for speaker, text in st.session_state.history:
