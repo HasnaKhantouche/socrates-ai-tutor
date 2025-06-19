@@ -3,7 +3,7 @@
 Project Socrates is an open-source EdTech application that simulates Socratic dialogue to foster critical thinking. Powered by FastAPI, Streamlit, and Google Gemini, it guides users through thoughtful questioning, never giving direct answers, and adapts its approach based on question complexity using NLP and a decision tree model.
 
 ## Features
-
+ 
 - **Socratic Dialogue:** AI responses scaffold deeper understanding, challenge assumptions, and encourage reflection.
 - **NLP Preprocessing:** Tokenization, lemmatization, and claim detection to focus Socratic questioning.
 - **Complexity Categorization:** ML-based decision tree adapts dialogue depth to user input.
